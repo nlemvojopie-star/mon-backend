@@ -1,35 +1,27 @@
 const express = require('express')
 const router = express.Router()
-const fs = require('fs')
-const path = require('path')
+const connectDB = require('../db')
 
-const fichier = path.join(__dirname, '..', 'messages.json')
-
-// GET — Lire tous les messages
-router.get('/', (req, res) => {
-  const messages = JSON.parse(fs.readFileSync(fichier, 'utf-8'))
+router.get('/', async (req, res) => {
+  const db = await connectDB()
+  const messages = await db.collection('messages').find().toArray()
   res.json(messages)
 })
 
-// POST — Sauvegarder un message
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { nom, message } = req.body
-  const messages = JSON.parse(fs.readFileSync(fichier, 'utf-8'))
-  
+  const db = await connectDB()
   const nouveauMessage = {
-    id: Date.now(),
     nom,
     message,
-    date: new Date().toLocaleDateString('fr-FR')
+    date: new Date().toLocaleDateString('fr-FR'),
+    createdAt: new Date()
   }
-  
-  messages.push(nouveauMessage)
-  fs.writeFileSync(fichier, JSON.stringify(messages, null, 2))
-  
-  console.log(`📨 Message sauvegardé de ${nom}`)
+  await db.collection('messages').insertOne(nouveauMessage)
+  console.log('Message recu de ' + nom)
   res.json({
     statut: 'success',
-    reponse: `Merci ${nom}, ton message a bien été sauvegardé !`
+    reponse: 'Merci ' + nom + ', ton message a bien ete sauvegarde dans MongoDB !'
   })
 })
 
