@@ -1,12 +1,13 @@
+require('dotenv').config()
 const { MongoClient } = require('mongodb')
 
-const uri = 'mongodb://localhost:27017'
+const uri = process.env.MONGODB_URI
 
 const client = new MongoClient(uri)
 
 async function connectDB() {
   await client.connect()
-  console.log('Connecte a MongoDB local !')
+  console.log('Connecte a MongoDB !')
   return client.db('formation')
 }
 
