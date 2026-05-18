@@ -12,6 +12,7 @@ app.use('/profil', require('./routes/profil'))
 app.use('/projets', require('./routes/projets'))
 app.use('/message', require('./routes/message'))
 app.use('/messages', require('./routes/message'))
+app.use('/auth', require('./routes/auth'))
 // Démarrer le serveur
 app.listen(PORT, () => {
   console.log(`✅ Serveur démarré sur http://localhost:${PORT}`)
